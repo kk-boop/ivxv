@@ -1,0 +1,15 @@
+# Due to the documentation referring to files outside of the `Documentation` subdirectory, the Dockerfile need be
+# placed in the root of the project.
+
+FROM danteev/texlive:202004010202249d541b AS prepared_image
+# Provides LaTeX 2019 and plantuml
+
+RUN pip3 install sphinx sphinx_rtd_theme
+
+#WORKDIR /ivxv
+
+COPY . .
+
+CMD ["./build_documentation.sh"]
+
+# To export the built documentation, mount a volume to "/ivxv/output/". Refer to the Github Action for more detail.
