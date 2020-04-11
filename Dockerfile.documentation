@@ -4,6 +4,8 @@
 FROM danteev/texlive:202004010202249d541b AS prepared_image
 # Provides LaTeX 2019 and plantuml
 
+RUN apt-get -q update && apt-get install -y jq
+
 RUN pip3 install sphinx sphinx_rtd_theme
 
 #WORKDIR /ivxv

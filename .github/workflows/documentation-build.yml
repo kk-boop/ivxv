@@ -1,0 +1,33 @@
+name: Build documentation
+
+on:
+  release:
+    types: [published]
+
+jobs:
+  build-documentation:
+    name: Build the documentation and upload to the release
+    runs-on: ubuntu-latest
+    steps:
+      - name: Pull source
+        uses: actions/checkout@v2
+
+      - name: Build the documentation compiling Docker image
+        run: docker build -t ivxv-doc -f Dockerfile.documentation .
+
+      - name: Run the documentation build
+        run: docker run -v $PWD/output:/home/output -e GITHUB_TOKEN -e GITHUB_EVENT_PATH -e GITHUB_REPOSITORY -e RELEASE_ID=$(jq --raw-output '.release.id' $GITHUB_EVENT_PATH) -t ivxv-doc
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Upload the built English documentation as an artifact
+        uses: actions/upload-artifact@v1
+        with:
+          name: en_documentation.zip
+          path: output/en_documentation.zip
+
+      - name: Upload the built Estonian documentation as an artifact
+        uses: actions/upload-artifact@v1
+        with:
+          name: et_documentation.zip
+          path: output/et_documentation.zip
